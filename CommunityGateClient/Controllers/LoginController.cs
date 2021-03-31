@@ -49,6 +49,7 @@ namespace CommunityGateClient.Controllers
                     else
                     {
                         _log4net.Info("Login Was Done With Email " + loginDetails.Username + " And the Right Password !!");
+
                         ViewBag.message = "Success";
                     }
                 }
