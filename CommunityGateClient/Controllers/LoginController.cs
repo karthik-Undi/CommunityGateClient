@@ -31,8 +31,6 @@ namespace CommunityGateClient.Controllers
             //string token;
             using (var httpClient = new HttpClient())
             {
-                ViewBag.message = "";
-
                 StringContent content = new StringContent(JsonConvert.SerializeObject(loginDetails), Encoding.UTF8, "application/json");
 
                 using (var response = await httpClient.PostAsync("https://localhost:44388/api/Login/AuthenicateUser", content))
@@ -56,9 +54,6 @@ namespace CommunityGateClient.Controllers
 
             }
             return View();
-
-
-
         }
 
     }

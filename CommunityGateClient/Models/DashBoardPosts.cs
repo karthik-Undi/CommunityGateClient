@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CommunityGateClient.Models
 {
-    public partial class DashBoardPosts
+    public class DashBoardPosts
     {
         public int DashItemId { get; set; }
         public string DashTitle { get; set; }
@@ -13,7 +13,5 @@ namespace CommunityGateClient.Models
         public string DashIntendedFor { get; set; }
         public int? ResidentId { get; set; }
         public DateTime? DashTime { get; set; }
-
-        public virtual Residents Resident { get; set; }
     }
 }
