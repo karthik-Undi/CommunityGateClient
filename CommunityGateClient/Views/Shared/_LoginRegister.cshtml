@@ -1,0 +1,48 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link href="~/Content/uistuff/plugins/fontawesome-free/css/all.css" rel="stylesheet" />
+
+    <!-- icheck bootstrap -->
+    <link href="~/Content/uistuff/plugins/icheck-bootstrap/icheck-bootstrap.css" rel="stylesheet" />
+
+    <!-- Theme style -->
+    <link href="~/Content/uistuff/dist/css/adminlte.css" rel="stylesheet" />
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+
+
+
+                @RenderSection("scripts", required: false)
+
+                @RenderBody()
+
+
+
+
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/Content/uistuff/plugins/jquery/jquery.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/Content/uistuff/plugins/bootstrap/js/bootstrap.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/Content/uistuff/dist/js/adminlte.js"></script>
+</body>
+</html>
+
