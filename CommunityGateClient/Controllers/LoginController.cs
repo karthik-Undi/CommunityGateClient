@@ -12,19 +12,22 @@ namespace CommunityGateClient.Controllers
 {
     public class LoginController : Controller
     {
+        static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(LoginController));
         public IActionResult Index()
         {
             return View();
         }
 
-        public ActionResult Login()
+        public IActionResult Login()
         {
+            _log4net.Info("Login Page Was Called !!");
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginDetails loginDetails)
+        public async Task<IActionResult> Login(LoginDetails loginDetails)
         {
+            
             //string token;
             using (var httpClient = new HttpClient())
             {
@@ -39,11 +42,14 @@ namespace CommunityGateClient.Controllers
 
                     if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
+                        _log4net.Info("Login Was Done With Email " + loginDetails.Username + " But the Credentials Were Wrong !!");
                         ViewBag.message = "Invalid User";
 
                     }
                     else
                     {
+                        _log4net.Info("Login Was Done With Email " + loginDetails.Username + " And the Right Password !!");
+
                         ViewBag.message = "Success";
                     }
                 }
