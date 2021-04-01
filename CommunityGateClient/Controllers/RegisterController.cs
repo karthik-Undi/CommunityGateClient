@@ -49,7 +49,7 @@ namespace CommunityGateClient.Controllers
                         else
                         {
                             _log4net.Info("Registration Was Done With Email " + employee.EmployeeEmail);
-                            return RedirectToAction("FirstLogin", "Login",new {email=employee.EmployeeEmail,role=employee.EmployeeDept });
+                            return RedirectToAction("FirstEmployeeLogin", "Login",new {email=employee.EmployeeEmail,role=employee.EmployeeDept });
                         }
                     }
 

@@ -24,7 +24,7 @@ namespace CommunityGateClient.Controllers
             return View();
         }
 
-        public IActionResult FirstLogin(string email,string role)
+        public IActionResult FirstEmployeeLogin(string email,string role)
         {
             var model = new LoginDetails();
             model.Username = email;

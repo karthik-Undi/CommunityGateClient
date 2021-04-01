@@ -10,11 +10,11 @@
 <hr />
 <div class="row">
     <div style="width:100%">
-        <form asp-action="Login" >
+        <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" required type="email"/>
+                <input asp-for="Username" class="form-control" required type="email" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -22,7 +22,7 @@
                 <input asp-for="Password" class="form-control" required type="password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group" >
+            <div class="form-group">
                 <label class="control-label">Login Type</label>
                 <select asp-for="LoginType" class="form-control" required>
                     <option value="" selected disabled hidden>Select</option>
@@ -38,9 +38,12 @@
                 </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Login" class="btn btn-primary" />&ensp;
+                @Html.ActionLink("Clear", "Login", "Login", new { @class = "btn btn-primary" })
+
             </div>
-            <br />
+
+
             <div>
                 @ViewBag.Message
             </div>
@@ -49,7 +52,9 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("New employee registration", "RegisterEmployee", "Register", new { @class = "btn btn-primary" })<br/>
+    @Html.ActionLink("New resident registration", "RegisterForResident", "Register", new { @class = "btn btn-primary" })
+
 </div>
 
 @section Scripts {

@@ -51,10 +51,14 @@
 
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Register" class="btn btn-primary" />&ensp;
+                @Html.ActionLink("     Clear", "RegisterEmployee", "Register", new { @class = "btn btn-primary" })
+
             </div>
-            @Html.ActionLink("Clear", "RegisterEmployee", "Register", new { @class = "btn btn-primary" })
+
         </form>
+        @Html.ActionLink("Back to Login", "Login", "Login", new { @class = "btn btn-primary" })
+
     </div>
 </div>
 
