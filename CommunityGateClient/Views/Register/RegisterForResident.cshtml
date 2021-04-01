@@ -12,39 +12,52 @@
         <form asp-action="RegisterForResident">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="ResidentName" class="form-control" placeholder="Resident Name"/>
+                <input asp-for="ResidentName" class="form-control" placeholder="Resident Name" />
                 <span asp-validation-for="ResidentName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input asp-for="ResidentHouseNo" class="form-control" placeholder="Resident House No."/>
-                <span asp-validation-for="ResidentHouseNo" class="text-danger"></span>
-            </div>
+            @if (ViewBag.freeHouseDropDownList == null)
+            {
+                @Html.DropDownListFor(model => model.ResidentHouseNo, new List<SelectListItem>
+                   {
+                   }, "HOUSE API NOT Running.",
+                   new { @class = "form-control" })
+                <br />
+            }
+            else
+            {
                 <div class="form-group">
-                    <select asp-for="ResidentType" class="form-control">
-                        <option value="" selected disabled hidden>Select Resident Type</option>
-                        <option value="Owner">
-                            Owner
-                        </option>
-                        <option value="Tenant">
-                           Tenant
-                        </option>
-                    </select>
+                    @*<input asp-for="ResidentHouseNo" class="form-control" placeholder="Resident House No."/>
+                <span asp-validation-for="ResidentHouseNo" class="text-danger"></span>*@
+                    @Html.DropDownListFor(model => model.ResidentHouseNo, ViewBag.freeHouseDropDownList as SelectList, "Select House No.", new { required = "required", @class = "form-control" })
+                </div>
+            }
+
+            <div class="form-group">
+                <select asp-for="ResidentType" class="form-control">
+                    <option value="" selected disabled hidden>Select Resident Type</option>
+                    <option value="Owner">
+                        Owner
+                    </option>
+                    <option value="Tenant">
+                        Tenant
+                    </option>
+                </select>
                 <span asp-validation-for="ResidentType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ResidentMobileNo" class="form-control" placeholder="Resident Mobile"/>
+                <input asp-for="ResidentMobileNo" class="form-control" placeholder="Resident Mobile" />
                 <span asp-validation-for="ResidentMobileNo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ResidentEmail" class="form-control" placeholder="Resident Email"/>
+                <input asp-for="ResidentEmail" class="form-control" placeholder="Resident Email" />
                 <span asp-validation-for="ResidentEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ResidentPassword" class="form-control" placeholder="Password"/>
+                <input asp-for="ResidentPassword" class="form-control" placeholder="Password" type="password" />
                 <span asp-validation-for="ResidentPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="ResidentConfirmPassword" class="form-control" placeholder="Confirm Password"/>
+                <input asp-for="ResidentConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
                 <span asp-validation-for="ResidentConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
