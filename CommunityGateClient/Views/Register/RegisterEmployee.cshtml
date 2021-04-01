@@ -1,0 +1,67 @@
+﻿@model CommunityGateClient.Models.ViewModels.EmployeeRegistration
+
+@{
+    ViewData["Title"] = "Employee Registration";
+    Layout = "~/Views/Shared/_LoginRegister.cshtml";
+}
+
+<h2>Register Employee</h2>
+<hr />
+<div class="row">
+    <div style="width:100%">
+        <form asp-action="RegisterEmployee">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <input asp-for="EmployeeName" class="form-control" placeholder="Name" />
+                <span asp-validation-for="EmployeeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <select asp-for="EmployeeDept" class="form-control" required>
+                    <option value="" selected disabled hidden>Department</option>
+                    <option value="Security">
+                        Security
+                    </option>
+                    <option value="Utility">
+                        Utility
+                    </option>
+                    <option value="Sanitation">
+                        Sanitation
+                    </option>
+                </select>
+                <span asp-validation-for="EmployeeDept" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="EmployeeMobile" class="form-control" placeholder="Mobile number" />
+                <span asp-validation-for="EmployeeMobile" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="EmployeeEmail" class="form-control" placeholder="Email ID" />
+                <span asp-validation-for="EmployeeEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="EmployeePassword" class="form-control" placeholder="Password" type="password" />
+                <span asp-validation-for="EmployeePassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @Html.ActionLink("Clear", "RegisterEmployee", "Register", new { @class = "btn btn-primary" })
+        </form>
+    </div>
+</div>
+
+<div>
+    @ViewBag.message
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

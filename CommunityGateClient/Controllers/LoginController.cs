@@ -24,6 +24,16 @@ namespace CommunityGateClient.Controllers
             return View();
         }
 
+        public IActionResult FirstLogin(string email,string role)
+        {
+            var model = new LoginDetails();
+            model.Username = email;
+            model.LoginType = "Employee";
+            
+            _log4net.Info("Login Page Was Called !!");
+            return View("Login",model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginDetails loginDetails)
         {
@@ -60,6 +70,10 @@ namespace CommunityGateClient.Controllers
 
 
         }
+
+
+
+
 
     }
 }
