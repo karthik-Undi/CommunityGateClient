@@ -155,7 +155,7 @@ namespace CommunityGateClient.Controllers
                             else
                             {
                                 _log4net.Info("Registration Was Done With Email " + regDetailsResident.ResidentEmail + " And the Registration Was Successfull !!");
-                                return RedirectToAction("Login", "Login");
+                                return RedirectToAction("FirstResidentLogin", "Login", new { email = regDetailsResident.ResidentEmail});
                             }
                         }
 

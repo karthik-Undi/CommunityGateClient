@@ -34,6 +34,16 @@ namespace CommunityGateClient.Controllers
             return View("Login", model);
         }
 
+        public IActionResult FirstResidentLogin(string email)
+        {
+            var model = new LoginDetails();
+            model.Username = email;
+            model.LoginType = "Resident";
+
+            _log4net.Info("Login Page Was Called !!");
+            return View("Login", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginDetails loginDetails)
         {
