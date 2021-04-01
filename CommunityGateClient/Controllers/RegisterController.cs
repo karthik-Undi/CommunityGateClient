@@ -36,24 +36,30 @@ namespace CommunityGateClient.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    ViewBag.message = "";
-                   
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(employee), Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PostAsync("http://localhost:62288/api/Employees/", content))
+                    try
                     {
 
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(employee), Encoding.UTF8, "application/json");
+
+                        using (var response = await httpClient.PostAsync("http://localhost:62288/api/Employees/", content))
+                        {
 
 
-                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                        {
-                            ViewBag.message = "Failed";
+
+                            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                            {
+                                ViewBag.Message = "Failed";
+                            }
+                            else
+                            {
+                                _log4net.Info("Registration Was Done With Email " + employee.EmployeeEmail);
+                                return RedirectToAction("FirstEmployeeLogin", "Login", new { email = employee.EmployeeEmail, role = employee.EmployeeDept });
+                            }
                         }
-                        else
-                        {
-                            _log4net.Info("Registration Was Done With Email " + employee.EmployeeEmail);
-                            return RedirectToAction("FirstEmployeeLogin", "Login",new {email=employee.EmployeeEmail,role=employee.EmployeeDept });
-                        }
+                    }
+                    catch(Exception)
+                    {
+                        ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
                     }
 
                 }
