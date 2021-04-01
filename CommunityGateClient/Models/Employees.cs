@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CommunityGateClient.Models
 {
-    public partial class Employees
+    public class Employees
     {
 
         public int EmployeeId { get; set; }
