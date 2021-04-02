@@ -9,12 +9,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Providers.Entities;
 
 namespace CommunityGateClient.Controllers
 {
     public class ResidentController : Controller
     {
-        Residents resident;
+        Residents resident=new Residents();
         string BaseurlForDashboardAPI = "http://localhost:52044/";
         string BaseurlForResidentAPI = "http://localhost:27414/";
 
@@ -31,6 +32,33 @@ namespace CommunityGateClient.Controllers
 
         public async Task<IActionResult> ResidentDashboard()
         {
+            TempData["UserID"] = 101;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            //Get Resident Details
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("/api/Resident/" + UserID);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        resident = JsonConvert.DeserializeObject<Residents>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+            }
+
+
+
             //AtAGlance
             OneForAll ofa=new OneForAll();
             try
@@ -39,10 +67,9 @@ namespace CommunityGateClient.Controllers
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(BaseurlForResidentAPI);
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(resident), Encoding.UTF8, "application/json");
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpResponseMessage Res = await client.GetAsync("/api/Resident/AtAGlance/"+ 101);
+                    HttpResponseMessage Res = await client.GetAsync("/api/Resident/AtAGlance/"+ resident.ResidentId);
                     if (Res.IsSuccessStatusCode)
                     {
                         var Response = Res.Content.ReadAsStringAsync().Result;
