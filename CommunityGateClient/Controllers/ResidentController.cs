@@ -13,6 +13,7 @@ namespace CommunityGateClient.Controllers
 {
     public class ResidentController : Controller
     {
+
         string BaseurlForDashboardAPI = "http://localhost:52044/";
 
         public IActionResult Index()
