@@ -7,14 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CommunityGateClient.Controllers
 {
     public class ResidentController : Controller
     {
-
+        Residents resident;
         string BaseurlForDashboardAPI = "http://localhost:52044/";
+        string BaseurlForResidentAPI = "http://localhost:27414/";
 
         public IActionResult Index()
         {
@@ -30,15 +32,42 @@ namespace CommunityGateClient.Controllers
         public async Task<IActionResult> ResidentDashboard()
         {
             //AtAGlance
+            OneForAll ofa=new OneForAll();
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(resident), Encoding.UTF8, "application/json");
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("/api/Resident/AtAGlance/"+ 101);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        ofa = JsonConvert.DeserializeObject<OneForAll>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+            }
+
+
+
+
             TempData["UserEmail"] = "resident@gmail.com";
-            TempData["quantity1"] = 4;
+            TempData["quantity1"] = ofa.visitors.ToList().Count();
             TempData["property1"] = "Visitors today";
-            TempData["quantity2"] = 2;
+            TempData["quantity2"] = ofa.complaints.ToList().Count();
             TempData["property2"] = "Unresolved Complaints";
             TempData["property3"] = "Wallet Balance";
             TempData["quantity3"] = 4000;
             TempData["property4"] = "Payment Due";
-            TempData["quantity4"] = 5;
+            TempData["quantity4"] = ofa.payments.ToList().Count();
 
             //NoticeBoard
             try
@@ -71,14 +100,6 @@ namespace CommunityGateClient.Controllers
             {
                 ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
             }
-
-
-
-
-
-
-
-
             return View();
         }
 
