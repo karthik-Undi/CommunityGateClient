@@ -13,5 +13,8 @@ namespace CommunityGateClient.Models
         public string DashIntendedFor { get; set; }
         public int? ResidentId { get; set; }
         public DateTime? DashTime { get; set; }
+
+        public virtual Residents Resident { get; set; }
+
     }
 }
