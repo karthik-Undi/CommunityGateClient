@@ -15,9 +15,12 @@ namespace CommunityGateClient.Controllers
 {
     public class ResidentController : Controller
     {
-        Residents resident=new Residents();
+        static Residents resident=new Residents();
+
         string BaseurlForDashboardAPI = "http://localhost:52044/";
         string BaseurlForResidentAPI = "http://localhost:27414/";
+        string BaseurlForVisitorAPI = "https://localhost:44301/";
+
 
         public IActionResult Index()
         {
@@ -60,7 +63,7 @@ namespace CommunityGateClient.Controllers
 
 
             //AtAGlance
-            OneForAll ofa=new OneForAll();
+            OneForAll ofa = new OneForAll();
             try
             {
 
@@ -130,6 +133,157 @@ namespace CommunityGateClient.Controllers
             return View();
         }
 
+        public IActionResult AddVisitor()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddVisitor(Visitors visitors)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData["UserID"] = 101;
+                int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+
+                //send visitor Details
+                visitors.ResidentId = UserID;
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(BaseurlForVisitorAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(visitors), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Visitor", content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            return RedirectToAction("ResidentDashboard");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> ShowVisitors()
+        {
+            List<Visitors> visitors = new List<Visitors>();
+           int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForVisitorAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("/api/Visitor/" +residentId);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        visitors = JsonConvert.DeserializeObject<List<Visitors>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+            }
+            return View(visitors);
+        }
+
+        public IActionResult UpdateVisitor()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateVisitor(int id, Visitors visitors)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData["UserID"] = 101;
+                int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+
+                //send visitor Details
+                visitors.ResidentId = UserID;
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(BaseurlForVisitorAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(visitors), Encoding.UTF8, "application/json");
+                     
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Visitor/"+id, content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            
+                            return RedirectToAction("ShowVisitors");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
+        public IActionResult DeleteVisitor()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteVisitor(int id)
+        {
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForVisitorAPI);
+
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.DeleteAsync("/api/Visitor/RemoveVisitor/"+ id);
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ViewBag.Message = "Failed";
+                    }
+                    else
+                    {
+
+                        return RedirectToAction("ShowVisitors");
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+            }
+            return View();
+        }
 
 
     }

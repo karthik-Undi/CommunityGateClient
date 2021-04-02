@@ -1,0 +1,47 @@
+﻿@model CommunityGateClient.Models.Visitors
+
+@{
+    ViewData["Title"] = "UpdateVisitor";
+    Layout = "~/Views/Shared/_ResidentLayout.cshtml";
+}
+
+<h1>UpdateVisitor</h1>
+
+<h4>Visitors</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="UpdateVisitor">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="VisitorName" class="control-label"></label>
+                <input asp-for="VisitorName" class="form-control" />
+                <span asp-validation-for="VisitorName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VisitorResaon" class="control-label"></label>
+                <input asp-for="VisitorResaon" class="form-control" />
+                <span asp-validation-for="VisitorResaon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VisitStartTime" class="control-label"></label>
+                <input asp-for="VisitStartTime" class="form-control" />
+                <span asp-validation-for="VisitStartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VisitEndTime" class="control-label"></label>
+                <input asp-for="VisitEndTime" class="form-control" />
+                <span asp-validation-for="VisitEndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
