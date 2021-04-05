@@ -10,7 +10,7 @@
         <!-- /.card-header -->
 
         <div class="card-header border-transparent">
-            <h3 class="card-title">Visitor Log</h3>
+            <h3 class="card-title">Complaint Log</h3>
 
             <div class="card-tools">
 
@@ -35,19 +35,13 @@
                             <tr>
                             <thead>
                                 <tr>
+                                    
                                     <th>
-                                        @Html.DisplayNameFor(model => model.ComplaintId)
+                                        Complaint Letter body
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.ResidentId)
+                                        Complaint status
                                     </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.ComplaintRegarding)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.ComplaintStatus)
-                                    </th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,22 +49,12 @@
                                 {
                                     <tr>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.ComplaintId)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ResidentId)
-                                        </td>
-                                        <td>
                                             @Html.DisplayFor(modelItem => item.ComplaintRegarding)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.ComplaintStatus)
                                         </td>
-                                        <td>
-                                            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                                        </td>
+
                                     </tr>
                                 }
                             </tbody>

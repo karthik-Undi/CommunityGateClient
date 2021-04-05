@@ -20,7 +20,7 @@ namespace CommunityGateClient.Controllers
         string BaseurlForDashboardAPI = "http://localhost:52044/";
         string BaseurlForResidentAPI = "http://localhost:27414/";
         string BaseurlForVisitorAPI = "https://localhost:44301/";
-        string BaseurlForComplaintAPI = "https://localhost:63429/";
+        string BaseurlForComplaintAPI = "http://localhost:36224/";
 
 
 
@@ -374,6 +374,7 @@ namespace CommunityGateClient.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateNotice(int id, DashBoardPosts dashBoardPost)
         {
+            id = dashBoardPost.DashItemId;
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
             dashBoardPost.ResidentId = UserID;
@@ -452,6 +453,7 @@ namespace CommunityGateClient.Controllers
         public IActionResult UpdatePostAutofill(int id,string title, string type,string intendedfor,string body)
         {
             var model = new DashBoardPosts();
+            model.DashItemId = id;
             model.DashTitle = title;
             model.DashType = type;
             model.DashIntendedFor = intendedfor;
@@ -473,7 +475,6 @@ namespace CommunityGateClient.Controllers
             
             if (ModelState.IsValid)
             {
-                //send visitor Details
                 try
                 {
 
@@ -484,7 +485,7 @@ namespace CommunityGateClient.Controllers
 
                         client.DefaultRequestHeaders.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        HttpResponseMessage response = await client.PostAsync("/api/Complaint", content);
+                        HttpResponseMessage response = await client.PostAsync("/api/Complaints", content);
                         if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                         {
                             ViewBag.Message = "Failed";
