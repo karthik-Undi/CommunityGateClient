@@ -16,7 +16,7 @@ namespace CommunityGateClient.Controllers
     public class ResidentController : Controller
     {
         static Residents resident=new Residents();
-
+        static int postid=0;
         string BaseurlForDashboardAPI = "http://localhost:52044/";
         string BaseurlForResidentAPI = "http://localhost:27414/";
         string BaseurlForVisitorAPI = "https://localhost:44301/";
@@ -340,13 +340,14 @@ namespace CommunityGateClient.Controllers
             try
             {
                 List<DashBoardPosts> dashBoardPostList = new List<DashBoardPosts>();
+                int UserID = Convert.ToInt32(TempData.Peek("UserID"));
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(BaseurlForDashboardAPI);
 
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpResponseMessage Res = await client.GetAsync("api/Dashboard/");
+                    HttpResponseMessage Res = await client.GetAsync("api/Dashboard/GetPostsByResidentId/" +UserID);
                     var model = new List<DashBoardPosts>();
                     if (Res.IsSuccessStatusCode)
                     {
@@ -374,7 +375,7 @@ namespace CommunityGateClient.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateNotice(int id, DashBoardPosts dashBoardPost)
         {
-            id = dashBoardPost.DashItemId;
+            id = postid;
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
             dashBoardPost.ResidentId = UserID;
@@ -452,6 +453,7 @@ namespace CommunityGateClient.Controllers
         }
         public IActionResult UpdatePostAutofill(int id,string title, string type,string intendedfor,string body)
         {
+            postid = id;
             var model = new DashBoardPosts();
             model.DashItemId = id;
             model.DashTitle = title;
