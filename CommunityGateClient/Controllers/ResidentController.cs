@@ -15,6 +15,7 @@ namespace CommunityGateClient.Controllers
 {
     public class ResidentController : Controller
     {
+        static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(ResidentController));
         static Residents resident=new Residents();
         static int postid=0;
         string BaseurlForDashboardAPI = "http://localhost:52044/";
@@ -30,16 +31,13 @@ namespace CommunityGateClient.Controllers
             return View();
         }
 
-        public IActionResult dash()
-        {
-            TempData["UserEmail"] = "resident@gmail.com";
-            return View();
-        }
 
         public async Task<IActionResult> ResidentDashboard()
         {
             TempData["UserID"] = 104;
+            
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Home Page was called For Resident with Id " + UserID);
             //Get Resident Details
             try
             {
@@ -91,16 +89,30 @@ namespace CommunityGateClient.Controllers
 
 
 
-
-            TempData["UserEmail"] = "resident@gmail.com";
-            TempData["quantity1"] = ofa.visitors.ToList().Count();
-            TempData["property1"] = "Visitors today";
-            TempData["quantity2"] = ofa.complaints.ToList().Count();
-            TempData["property2"] = "Unresolved Complaints";
-            TempData["property3"] = "Wallet Balance";
-            TempData["quantity3"] = resident.ResidentWallet;
-            TempData["property4"] = "Payment Due";
-            TempData["quantity4"] = ofa.payments.ToList().Count();
+            try
+            {
+                TempData["UserEmail"] = "resident@gmail.com";
+                TempData["quantity1"] = ofa.visitors.ToList().Count();
+                TempData["property1"] = "Visitors today";
+                TempData["quantity2"] = ofa.complaints.ToList().Count();
+                TempData["property2"] = "Unresolved Complaints";
+                TempData["property3"] = "Wallet Balance";
+                TempData["quantity3"] = resident.ResidentWallet;
+                TempData["property4"] = "Payment Due";
+                TempData["quantity4"] = ofa.payments.ToList().Count();
+            }
+            catch(Exception)
+            {
+                TempData["UserEmail"] = "resident@gmail.com";
+                TempData["quantity1"] = "API not reachable";
+                TempData["property1"] = "Visitors today";
+                TempData["quantity2"] = "API not reachable";
+                TempData["property2"] = "Unresolved Complaints";
+                TempData["property3"] = "Wallet Balance";
+                TempData["quantity3"] = "API not reachable";
+                TempData["property4"] = "Payment Due";
+                TempData["quantity4"] = "API not reachable";
+            }
 
             //NoticeBoard
             try
@@ -138,6 +150,7 @@ namespace CommunityGateClient.Controllers
 
         public IActionResult AddVisitor()
         {
+            _log4net.Info("Add Visitor Was Called !!");
             return View();
         }
         [HttpPost]
@@ -147,7 +160,7 @@ namespace CommunityGateClient.Controllers
             {
                 TempData["UserID"] = 104;
                 int UserID = Convert.ToInt32(TempData.Peek("UserID"));
-
+                _log4net.Info("Visitor For Resident With ID " +UserID+ " Was Added!!");
                 //send visitor Details
                 visitors.ResidentId = UserID;
                 try
@@ -167,6 +180,7 @@ namespace CommunityGateClient.Controllers
                         }
                         else
                         {
+                            _log4net.Info("Visitor with name " + visitors.VisitorName + " Was Added !!");
                             return RedirectToAction("ResidentDashboard");
                         }
 
@@ -182,8 +196,10 @@ namespace CommunityGateClient.Controllers
 
         public async Task<IActionResult> ShowVisitors()
         {
+            
             List<Visitors> visitors = new List<Visitors>();
            int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Show Visitors For Resident With ID "+residentId+ " Was Called !!");
             try
             {
 
@@ -210,6 +226,7 @@ namespace CommunityGateClient.Controllers
 
         public IActionResult UpdateVisitor()
         {
+            _log4net.Info("Update Visitor Was Called !!");
             return View();
         }
         [HttpPost]
@@ -219,7 +236,7 @@ namespace CommunityGateClient.Controllers
             {
                 TempData["UserID"] = 104;
                 int UserID = Convert.ToInt32(TempData.Peek("UserID"));
-
+                _log4net.Info("Update Visitor For Resident With ID "+UserID+" Was Called !!");
                 //send visitor Details
                 visitors.ResidentId = UserID;
                 try
@@ -239,7 +256,7 @@ namespace CommunityGateClient.Controllers
                         }
                         else
                         {
-                            
+                            _log4net.Info("Visitor with Id " + id + " Was Updated !!");
                             return RedirectToAction("ShowVisitors");
                         }
 
@@ -254,6 +271,7 @@ namespace CommunityGateClient.Controllers
         }
         public IActionResult DeleteVisitor()
         {
+            _log4net.Info("Delete Visitor Was Called !!");
             return View();
         }
         [HttpPost]
@@ -275,7 +293,7 @@ namespace CommunityGateClient.Controllers
                     }
                     else
                     {
-
+                        _log4net.Info("Visitor With ID " + id + " Was Deleted !!");
                         return RedirectToAction("ShowVisitors");
                     }
 
@@ -290,6 +308,7 @@ namespace CommunityGateClient.Controllers
         ///////////////////////////////////////////////////////////////////////////
         public IActionResult AddNotice()
         {
+            _log4net.Info("Add Notice Was Called !!");
             return View();
         }
         [HttpPost]
@@ -297,6 +316,7 @@ namespace CommunityGateClient.Controllers
         {
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add Notice For Resident With Id " + UserID + " Was Called !!");
             dashBoardPost.ResidentId = UserID;
             dashBoardPost.DashTime = DateTime.Now;
             dashBoardPost.ResidentName = resident.ResidentName;
@@ -321,6 +341,7 @@ namespace CommunityGateClient.Controllers
                         }
                         else
                         {
+                            _log4net.Info("Dashboard With Title " + dashBoardPost.DashTitle + " Was Added !!");
                             return RedirectToAction("ResidentDashboard");
                         }
 
@@ -341,6 +362,7 @@ namespace CommunityGateClient.Controllers
             {
                 List<DashBoardPosts> dashBoardPostList = new List<DashBoardPosts>();
                 int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+                _log4net.Info("Show Posts for Resident With ID " + UserID + " Was Called !!");
                 using (var client = new HttpClient())
                 {
                     client.BaseAddress = new Uri(BaseurlForDashboardAPI);
@@ -370,6 +392,7 @@ namespace CommunityGateClient.Controllers
 
         public IActionResult UpdateNotice(DashBoardPosts dashBoardPost)
         {
+            _log4net.Info("Update Notice Was Called !!");
             return View(dashBoardPost);
         }
         [HttpPost]
@@ -378,6 +401,7 @@ namespace CommunityGateClient.Controllers
             id = postid;
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Update Notice For Resident With ID " + UserID + " Was Called !!");
             dashBoardPost.ResidentId = UserID;
             dashBoardPost.DashTime = DateTime.Now;
             dashBoardPost.DashIntendedFor = dashBoardPost.DashIntendedFor + " (Edited)";
@@ -401,7 +425,7 @@ namespace CommunityGateClient.Controllers
                         }
                         else
                         {
-
+                            _log4net.Info("Dahboard Post With ID " + id + " Was Updated !!");
                             return RedirectToAction("ResidentDashboard");
                         }
 
@@ -418,6 +442,7 @@ namespace CommunityGateClient.Controllers
         ////////////
         public IActionResult DeleteNotice()
         {
+            _log4net.Info("Delete Notice Was Called !!");
             return View();
         }
         [HttpPost]
@@ -439,7 +464,7 @@ namespace CommunityGateClient.Controllers
                     }
                     else
                     {
-
+                        _log4net.Info("Dashboard Post With Id " + id + " Was Deleted !!");
                         return RedirectToAction("ShowPosts");
                     }
 
@@ -466,6 +491,7 @@ namespace CommunityGateClient.Controllers
         ///////complaint
         public IActionResult AddComplaint()
         {
+            _log4net.Info("Add Complaint Was Called !!");
             return View();
         }
         [HttpPost]
@@ -473,6 +499,7 @@ namespace CommunityGateClient.Controllers
         {
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add Complaint for Resident With ID " + UserID + " Was Called !!");
             complaint.ResidentId = UserID;
             
             if (ModelState.IsValid)
@@ -494,6 +521,7 @@ namespace CommunityGateClient.Controllers
                         }
                         else
                         {
+                            _log4net.Info("Complaint Reagrding " + complaint.ComplaintRegarding + " Was Registered !!");
                             return RedirectToAction("ShowComplaints");
                         }
 
@@ -510,6 +538,7 @@ namespace CommunityGateClient.Controllers
         {
             List<Complaints> complaints = new List<Complaints>();
             int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Show Complaints For Resident ID " + residentId + " Was Called !!");
             try
             {
 
