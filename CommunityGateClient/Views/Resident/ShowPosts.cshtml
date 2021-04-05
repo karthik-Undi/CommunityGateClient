@@ -1,0 +1,111 @@
+﻿@model IEnumerable<CommunityGateClient.Models.DashBoardPosts>
+
+@{
+    ViewData["Title"] = "ShowPosts";
+    Layout = "~/Views/Shared/_ResidentLayout.cshtml";
+}
+
+<div class="card">
+
+    <!-- /.card-header -->
+
+    <div class="card-header border-transparent">
+        <h3 class="card-title">Visitor Log</h3>
+
+        <div class="card-tools">
+
+            <input id="search" type="text" placeholder="Search title">
+
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.card-header -->
+
+
+
+
+
+    <div class="card-body">
+        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                        <tr>
+                        <thead>
+                            <tr>
+
+                                <th>
+                                    Title
+                                </th>
+                                <th>
+                                    Post type
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    Intended for & Edit status
+                                </th>
+
+                                <th>
+                                    Posted date/time
+                                </th>
+
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DashTitle)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DashType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DashBody)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DashIntendedFor)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DashTime)
+                                    </td>
+
+                                    <td>
+                                        @Html.ActionLink("Edit", "UpdatePostAutofill", new { id = item.DashItemId,title=item.DashTitle,type=item.DashType,body=item.DashBody, intendedfor=item.DashIntendedFor}) |
+                                        @Html.ActionLink("Delete", "DeleteNotice", new { id = item.DashItemId })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $("#search").on("keyup", function () {
+        var enteredText = $(this).val();
+        $("table tr").each(function (results) {
+            if (results !== 0) {
+                var id = $(this).find("td:nth-child(1)").text();
+                if (id.indexOf(enteredText) !== 0 && id.toLowerCase().indexOf(enteredText.toLowerCase()) < 0) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            }
+        });
+
+    });</script>

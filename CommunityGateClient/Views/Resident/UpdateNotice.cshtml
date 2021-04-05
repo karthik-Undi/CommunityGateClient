@@ -1,0 +1,55 @@
+﻿@model CommunityGateClient.Models.DashBoardPosts
+
+@{
+    ViewData["Title"] = "UpdateNotice";
+    Layout = "~/Views/Shared/_ResidentLayout.cshtml";
+}
+
+<div class="col-md-6">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Edit Notice</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <form asp-action="UpdateNotice">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label class="control-label"> Title</label>
+                        <input asp-for="DashTitle" class="form-control" />
+                        <span asp-validation-for="DashTitle" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Type</label>
+                        <input asp-for="DashType" class="form-control" />
+                        <span asp-validation-for="DashType" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Intended for</label>
+                        <input asp-for="DashIntendedFor" class="form-control" />
+                        <span asp-validation-for="DashIntendedFor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Description</label>
+                        <textarea asp-for="DashBody" class="form-control" ></textarea>
+                        <span asp-validation-for="DashBody" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

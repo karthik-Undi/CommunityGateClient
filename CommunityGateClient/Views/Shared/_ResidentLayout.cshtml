@@ -86,49 +86,52 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-                            <li>
+                        <li>
 
-                                @Html.ActionLink("Home", "ResidentDashboard", "Resident", new { @class = "button4" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Add Visitors", "AddVisitor", "Resident", new { @class = "button4" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Manage Visitors", "ShowVisitors", "Resident", new { @class = "button4" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Post a Notice", "CreatePost", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Manage your Posts", "VieworDeletePosts", "Resident", new { @class = "nav-link" })
-                            </li>
+                            @Html.ActionLink("Home", "ResidentDashboard", "Resident", new { @class = "button4" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Add Visitors", "AddVisitor", "Resident", new { @class = "button4" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Manage Visitors", "ShowVisitors", "Resident", new { @class = "button4" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Post a Notice", "AddNotice", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Manage your Posts", "ShowPosts", "Resident", new { @class = "nav-link" })
+                        </li>
 
-                            <li>
-                                @Html.ActionLink("Raise aComplaint", "RaiseComplaint", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Book a Service", "BookService", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Manage Booked Services", "VieworDeleteServices", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Add a friend or family", "AddFamily", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Recharge Wallet", "VieworDeleteFoF", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Payments", "Pay", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Payment History", "PaymentHistory", "Resident", new { @class = "nav-link" })
-                            </li>
-                            <li>
-                                @Html.ActionLink("Logout", "Logout", "Resident", new { @class = "nav-link" })
-                            </li>
+                        <li>
+                            @Html.ActionLink("Raise aComplaint", "AddComplaint", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Manage Complaints", "ShowComplaints", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Book a Service", "BookService", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Manage Booked Services", "VieworDeleteServices", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Add a friend or family", "AddFamily", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Recharge Wallet", "VieworDeleteFoF", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Payments", "Pay", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Payment History", "PaymentHistory", "Resident", new { @class = "nav-link" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("Logout", "Logout", "Resident", new { @class = "nav-link" })
+                        </li>
 
-</ul>
+                    </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
