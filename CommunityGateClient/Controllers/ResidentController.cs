@@ -2,6 +2,7 @@
 using CommunityGateClient.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ServicesAPI.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace CommunityGateClient.Controllers
         string BaseurlForResidentAPI = "http://localhost:27414/";
         string BaseurlForVisitorAPI = "https://localhost:44301/";
         string BaseurlForComplaintAPI = "http://localhost:36224/";
+        string baseUrlForServicesAPI = "http://localhost:41093/";
 
 
 
@@ -563,7 +565,81 @@ namespace CommunityGateClient.Controllers
             return View(complaints);
         }
 
+        public IActionResult AddService()
+        {
+            _log4net.Info("Add Service Was Called !!");
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> AddService(Services services)
+        {
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add Service for Resident With ID " + UserID + " Was Called !!");
+            services.ResidentId = UserID;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(baseUrlForServicesAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(services), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Services", content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            _log4net.Info("Service Type " + services.ServiceType + " Was Registered !!");
+                            return RedirectToAction("ShowServices");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "Service API Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> ShowServices()
+        {
+            List<ServiceDetails> servicedetails = new List<ServiceDetails>();
+            int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Show Services For Resident ID " + residentId + " Was Called !!");
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForServicesAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/Services/" + residentId);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        servicedetails = JsonConvert.DeserializeObject<List<ServiceDetails>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Services API Not Reachable. Please Try Again Later.";
+            }
+            return View(servicedetails);
+        }
 
     }
 }

@@ -49,7 +49,7 @@ namespace CommunityGateClient
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Resident}/{action=ResidentDashboard}/{id?}");
             });
         }
     }
