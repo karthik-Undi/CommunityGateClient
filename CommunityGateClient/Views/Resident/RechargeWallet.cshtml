@@ -1,0 +1,50 @@
+﻿@model CommunityGateClient.Models.Residents
+
+@{
+    ViewData["Title"] = "RechargeWallet";
+    Layout = "~/Views/Shared/_ResidentLayout.cshtml";
+}
+<div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-warning" style="width:1200px;height:300px">
+        <div class="inner">
+            <h3>@TempData.Peek("quantity3")</h3>
+
+            <p>@TempData.Peek("property3")</p>
+        </div>
+        <div class="icon">
+            <i class="ion ion-person-add"></i>
+        </div>
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Recharge Wallet</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <form asp-action="RechargeWallet">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label class="control-label">Recharge amount</label>
+                        <input asp-for="ResidentWallet" class="form-control" />
+                        <span asp-validation-for="ResidentWallet" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+
+                        <input type="submit" value="Recharge" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

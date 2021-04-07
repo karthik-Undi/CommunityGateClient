@@ -24,6 +24,7 @@ namespace CommunityGateClient.Controllers
         string BaseurlForVisitorAPI = "https://localhost:44301/";
         string BaseurlForComplaintAPI = "http://localhost:36224/";
         string baseUrlForServicesAPI = "http://localhost:41093/";
+        string baseUrlForFaFAPI = "http://localhost:62521/";
 
 
 
@@ -641,5 +642,128 @@ namespace CommunityGateClient.Controllers
             return View(servicedetails);
         }
 
+        //////////////////////////FaF
+        public IActionResult AddFaF()
+        {
+            _log4net.Info("Add FoF Was Called !!");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFaF(FriendsAndFamily faf)
+        {
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add friends and family for Resident With ID " + UserID + " Was Called !!");
+            faf.ResidentId = UserID;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(baseUrlForFaFAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(faf), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/FaF", content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            _log4net.Info("friend/family  " + faf.FaFname + " Was Registered !!");
+                            return RedirectToAction("ShowFaF");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "FriendsandFamilyAPI Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
+        public async Task<IActionResult> ShowFaF()
+        {
+            List<FriendsAndFamily> friendsAndFamilies = new List<FriendsAndFamily>();
+            int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("friends and family list For Resident ID " + residentId + " Was Called !!");
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForFaFAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/FaF/" + residentId);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        friendsAndFamilies = JsonConvert.DeserializeObject<List<FriendsAndFamily>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Services API Not Reachable. Please Try Again Later.";
+            }
+            return View(friendsAndFamilies);
+        }
+        ////////////////////Wallet
+        public IActionResult RechargeWallet()
+        {
+            _log4net.Info("Add FoF Was Called !!");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RechargeWallet(Residents res)
+        {
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add friends and family for Resident With ID " + UserID + " Was Called !!");
+            resident.ResidentWallet = resident.ResidentWallet +res.ResidentWallet;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(resident), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Resident/" + resident.ResidentId, content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            var data = response.Content.ReadAsStringAsync().Result;
+                            Residents tempres = JsonConvert.DeserializeObject<Residents>(data);
+                            _log4net.Info(" new wallet balance  " + tempres.ResidentWallet + " Was updated !!");
+                            return RedirectToAction("ResidentDashboard");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "FriendsandFamilyAPI Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
     }
 }
