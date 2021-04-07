@@ -642,6 +642,54 @@ namespace CommunityGateClient.Controllers
             return View(servicedetails);
         }
 
+        public IActionResult UpdateService()
+        {
+            _log4net.Info("Update Service Was Called !!");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateService(int id,Services services)
+        {
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Update Service For Resident With ID " + UserID + " Was Called !!");
+            if (ModelState.IsValid)
+            {
+                //send visitor Details
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(baseUrlForServicesAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(services), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("api/Services/ResidentItem/" + id, content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            _log4net.Info("Service With ID " + id + " Was Updated !!");
+                            return RedirectToAction("ShowServices");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "Services API Not Reachable. Please Try Again Later.";
+                }
+            }
+            return View();
+        }
+
+
+
         //////////////////////////FaF
         public IActionResult AddFaF()
         {

@@ -1,0 +1,79 @@
+﻿@model CommunityGateClient.Models.Services
+
+@{
+    ViewData["Title"] = "UpdateService";
+    Layout = "~/Views/Shared/_ResidentLayout.cshtml";
+}
+
+<div class="col-md-6">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Edit Service</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <form asp-action="UpdateService">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label class="control-label">Service Type</label>
+                        <select asp-for="ServiceType" class="form-control" required>
+                            <option value="" selected disabled hidden>Select Service Type</option>
+                            <option value="Utility">
+                                First Aid
+                            </option>
+                            <option value="Sanitation">
+                                Sanitation
+                            </option>
+                            <option value="Utility">
+                                Vehicle Servicing
+                            </option>
+                            <option value="Utility">
+                                Catering
+                            </option>
+                            <option value="Utility">
+                                Plumbing
+                            </option>
+                            <option value="Utility">
+                                Electrical
+                            </option>
+                            <option value="Utility">
+                                Carpentering
+                            </option>
+                            <option value="Utility">
+                                Others
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AppointmentTime" class="control-label"></label>
+                        <input asp-for="AppointmentTime" class="form-control" />
+                        <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ServiceMessage" class="control-label"></label>
+                        <input asp-for="ServiceMessage" class="form-control" />
+                        <span asp-validation-for="ServiceMessage" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Edit" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            @ViewBag.Message
+        </div>
+        </div>
+    </div>
+
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
