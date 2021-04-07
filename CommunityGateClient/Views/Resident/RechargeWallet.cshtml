@@ -1,50 +1,164 @@
-﻿@model CommunityGateClient.Models.Residents
+﻿@model CommunityGateClient.Models.ViewModels.walletandpayment
 
 @{
     ViewData["Title"] = "RechargeWallet";
     Layout = "~/Views/Shared/_ResidentLayout.cshtml";
 }
-<div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-warning" style="width:1200px;height:300px">
-        <div class="inner">
-            <h3>@TempData.Peek("quantity3")</h3>
 
-            <p>@TempData.Peek("property3")</p>
-        </div>
-        <div class="icon">
-            <i class="ion ion-person-add"></i>
-        </div>
-    </div>
-</div>
-<div class="col-md-6">
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">Recharge Wallet</h3>
+<!-- small box -->
+<div style="width:1200px">
+    <div style="float:left;margin-left:35px;margin-right:20px">
+        <div class="small-box bg-success" style="width:555px;height:300px">
+            <div class="inner">
+                <div class="card-body">
+                    <p style="font-size:32px;">@TempData.Peek("property3")</p>
+                    <p style="font-size:150px">₹ @TempData.Peek("quantity3")</p>
 
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <form asp-action="RechargeWallet">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <div class="form-group">
-                        <label class="control-label">Recharge amount</label>
-                        <input asp-for="ResidentWallet" class="form-control" />
-                        <span asp-validation-for="ResidentWallet" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-
-                        <input type="submit" value="Recharge" class="btn btn-primary" />
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
+    <div style="float:right;margin-left:20px">
+        <div class="small-box" style="width:555px;height:300px;background-color:powderblue">
+            <div class="inner">
+                <div class="card-body">
+
+                    <form asp-action="RechargeWallet">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <p style="font-size:18px;">Recharge Amount</p>
+
+                            <input asp-for="residents.ResidentWallet" class="form-control" />
+                            <span asp-validation-for="residents.ResidentWallet" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <p style="font-size:18px;">Mode of Payment</p>
+                            <select class="form-control" required>
+                                <option value="Utility">
+                                    Credit Card/Debit card
+                                </option>
+                                <option value="Sanitation">
+                                    Netbanking
+                                </option>
+                                <option value="Utility">
+                                    UPI
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+
+                            <input type="submit" value="Recharge" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h3 style="margin-left:36px;margin-bottom:15px;">Payment History</h3>
+
+
+
+<div class="card" style="float: left; margin-left: 36px; width: 94%; margin-right: 36px;">
+
+    <!-- /.card-header -->
+
+    <div class="card-header border-transparent">
+        <div class="card-tools">
+
+            <input id="search" type="text" placeholder="Search type">
+
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.card-header -->
+
+
+
+
+
+    <div class="card-body">
+        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                        <tr>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Payment For
+                                </th>
+                                <th>
+                                    Amount
+                                </th>
+                                <th>
+                                    EmployeeId
+                                </th>
+                                <th>
+                                    PaymentStatus
+                                </th>
+                                <th>
+                                    ServiceId
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.payments)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PaymentFor)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Amount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.EmployeeId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PaymentStatus)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ServiceId)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $("#search").on("keyup", function () {
+        var enteredText = $(this).val();
+        $("table tr").each(function (results) {
+            if (results !== 0) {
+                var id = $(this).find("td:nth-child(1)").text();
+                if (id.indexOf(enteredText) !== 0 && id.toLowerCase().indexOf(enteredText.toLowerCase()) < 0) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            }
+        });
+
+    });</script>

@@ -25,7 +25,7 @@ namespace CommunityGateClient.Controllers
         string BaseurlForComplaintAPI = "http://localhost:36224/";
         string baseUrlForServicesAPI = "http://localhost:41093/";
         string baseUrlForFaFAPI = "http://localhost:62521/";
-
+        static OneForAll ofa2 = new OneForAll();
 
 
 
@@ -81,6 +81,7 @@ namespace CommunityGateClient.Controllers
                     {
                         var Response = Res.Content.ReadAsStringAsync().Result;
                         ofa = JsonConvert.DeserializeObject<OneForAll>(Response);
+                        ofa2 = ofa;
                     }
 
                 }
@@ -102,7 +103,7 @@ namespace CommunityGateClient.Controllers
                 TempData["property3"] = "Wallet Balance";
                 TempData["quantity3"] = resident.ResidentWallet;
                 TempData["property4"] = "Payment Due";
-                TempData["quantity4"] = ofa.payments.ToList().Count();
+                TempData["quantity4"] = ofa.payments.Where(x=>x.PaymentStatus=="Requested").ToList().Count();
             }
             catch(Exception)
             {
@@ -768,17 +769,23 @@ namespace CommunityGateClient.Controllers
         ////////////////////Wallet
         public IActionResult RechargeWallet()
         {
+            walletandpayment w = new walletandpayment();
+            w.payments = ofa2.payments;
             _log4net.Info("Add FoF Was Called !!");
-            return View();
+            return View(w);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> RechargeWallet(Residents res)
+        public async Task<IActionResult> RechargeWallet(walletandpayment wp)
         {
+            walletandpayment w = new walletandpayment();
+            w.payments = ofa2.payments;
+
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
             _log4net.Info("Add friends and family for Resident With ID " + UserID + " Was Called !!");
-            resident.ResidentWallet = resident.ResidentWallet +res.ResidentWallet;
+            resident.ResidentWallet = resident.ResidentWallet +wp.residents.ResidentWallet;
             if (ModelState.IsValid)
             {
                 try
@@ -801,7 +808,9 @@ namespace CommunityGateClient.Controllers
                             var data = response.Content.ReadAsStringAsync().Result;
                             Residents tempres = JsonConvert.DeserializeObject<Residents>(data);
                             _log4net.Info(" new wallet balance  " + tempres.ResidentWallet + " Was updated !!");
-                            return RedirectToAction("ResidentDashboard");
+                            TempData["quantity3"] = tempres.ResidentWallet;
+
+                            return View(w);
                         }
 
                     }
@@ -811,7 +820,7 @@ namespace CommunityGateClient.Controllers
                     ViewBag.Message = "FriendsandFamilyAPI Not Reachable. Please Try Again Later.";
                 }
             }
-            return View();
+            return View(w);
         }
     }
 }
