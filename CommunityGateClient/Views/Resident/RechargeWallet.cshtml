@@ -12,8 +12,7 @@
             <div class="inner">
                 <div class="card-body">
                     <p style="font-size:32px;">@TempData.Peek("property3")</p>
-                    <p style="font-size:150px">₹ @TempData.Peek("quantity3")</p>
-
+                    <p style="font-size:150px">@TempData.Peek("quantity3")</p>
 
                 </div>
             </div>
@@ -100,15 +99,11 @@
                                     Amount
                                 </th>
                                 <th>
-                                    EmployeeId
+                                    Employee Name
                                 </th>
                                 <th>
-                                    PaymentStatus
+                                    Payment Status
                                 </th>
-                                <th>
-                                    ServiceId
-                                </th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,18 +117,10 @@
                                         @Html.DisplayFor(modelItem => item.Amount)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.EmployeeId)
+                                        @Html.DisplayFor(modelItem => item.EmployeeName)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.PaymentStatus)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.ServiceId)
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                                     </td>
                                 </tr>
                             }

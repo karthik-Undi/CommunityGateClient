@@ -25,7 +25,8 @@ namespace CommunityGateClient.Controllers
         string BaseurlForComplaintAPI = "http://localhost:36224/";
         string baseUrlForServicesAPI = "http://localhost:41093/";
         string baseUrlForFaFAPI = "http://localhost:62521/";
-        static OneForAll ofa2 = new OneForAll();
+        string baseUrlForPaymentAPI = "http://localhost:27340/";
+        //static OneForAll ofa2 = new OneForAll();
 
 
 
@@ -81,7 +82,7 @@ namespace CommunityGateClient.Controllers
                     {
                         var Response = Res.Content.ReadAsStringAsync().Result;
                         ofa = JsonConvert.DeserializeObject<OneForAll>(Response);
-                        ofa2 = ofa;
+                        //ofa2 = ofa;
                     }
 
                 }
@@ -101,7 +102,7 @@ namespace CommunityGateClient.Controllers
                 TempData["quantity2"] = ofa.complaints.ToList().Count();
                 TempData["property2"] = "Unresolved Complaints";
                 TempData["property3"] = "Wallet Balance";
-                TempData["quantity3"] = resident.ResidentWallet;
+                TempData["quantity3"] = "₹ "+resident.ResidentWallet;
                 TempData["property4"] = "Payment Due";
                 TempData["quantity4"] = ofa.payments.Where(x=>x.PaymentStatus=="Requested").ToList().Count();
             }
@@ -767,24 +768,71 @@ namespace CommunityGateClient.Controllers
             return View(friendsAndFamilies);
         }
         ////////////////////Wallet
-        public IActionResult RechargeWallet()
+        public async Task<IActionResult> RechargeWallet()
         {
-            walletandpayment w = new walletandpayment();
-            w.payments = ofa2.payments;
-            _log4net.Info("Add FoF Was Called !!");
-            return View(w);
+            _log4net.Info("Recharge Wallet and View Payment History Was Called !!");
+            walletandpayment wapObject = new walletandpayment();
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForPaymentAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/Payments/GetPaymentsByRedsidentId/" + UserID);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        wapObject.payments = JsonConvert.DeserializeObject<List<PaymentDetails>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Payment API Not Reachable. Please Try Again Later.";
+            }
+            //w.payments = ofa2.payments;
+      
+            return View(wapObject);
         }
 
 
         [HttpPost]
         public async Task<IActionResult> RechargeWallet(walletandpayment wp)
         {
-            walletandpayment w = new walletandpayment();
-            w.payments = ofa2.payments;
-
+       
+            walletandpayment wapObject = new walletandpayment();
             TempData["UserID"] = 104;
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
-            _log4net.Info("Add friends and family for Resident With ID " + UserID + " Was Called !!");
+            _log4net.Info("Recharge Wallet and View Payment History for Resident With ID " + UserID + " Was Called !!");
+            //w.payments = ofa2.payments;
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForPaymentAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/Payments/GetPaymentsByRedsidentId/" + UserID);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        wapObject.payments = JsonConvert.DeserializeObject<List<PaymentDetails>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Payment API Not Reachable. Please Try Again Later.";
+            }
+          
+
             resident.ResidentWallet = resident.ResidentWallet +wp.residents.ResidentWallet;
             if (ModelState.IsValid)
             {
@@ -810,7 +858,7 @@ namespace CommunityGateClient.Controllers
                             _log4net.Info(" new wallet balance  " + tempres.ResidentWallet + " Was updated !!");
                             TempData["quantity3"] = tempres.ResidentWallet;
 
-                            return View(w);
+                            return View(wapObject);
                         }
 
                     }
@@ -820,7 +868,7 @@ namespace CommunityGateClient.Controllers
                     ViewBag.Message = "FriendsandFamilyAPI Not Reachable. Please Try Again Later.";
                 }
             }
-            return View(w);
+            return View(wapObject);
         }
     }
 }
