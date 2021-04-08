@@ -856,7 +856,7 @@ namespace CommunityGateClient.Controllers
                             var data = response.Content.ReadAsStringAsync().Result;
                             Residents tempres = JsonConvert.DeserializeObject<Residents>(data);
                             _log4net.Info(" new wallet balance  " + tempres.ResidentWallet + " Was updated !!");
-                            TempData["quantity3"] = tempres.ResidentWallet;
+                            TempData["quantity3"] = "₹ " + tempres.ResidentWallet;
 
                             return View(wapObject);
                         }
