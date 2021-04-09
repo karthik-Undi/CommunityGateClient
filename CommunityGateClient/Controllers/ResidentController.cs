@@ -26,6 +26,7 @@ namespace CommunityGateClient.Controllers
         string baseUrlForServicesAPI = "http://localhost:41093/";
         string baseUrlForFaFAPI = "http://localhost:62521/";
         string baseUrlForPaymentAPI = "http://localhost:27340/";
+        string baseUrlForEmployeeAPI = "http://localhost:62288/";
         //static OneForAll ofa2 = new OneForAll();
 
 
@@ -689,8 +690,146 @@ namespace CommunityGateClient.Controllers
             }
             return View();
         }
+        
+        public async Task<IActionResult> PayForService(int id)
+        {
+            _log4net.Info("Pay For Service Was Called !!");
+            Payments payment = new Payments();
+            int residentId = Convert.ToInt32(TempData.Peek("UserID"));
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForPaymentAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/Payments/GetPaymentByServiceId/" + id);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        payment = JsonConvert.DeserializeObject<Payments>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Payments API Not Reachable. Please Try Again Later.";
+            }
+            return View(payment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PayForService(int id,Payments payment)
+        {
+            TempData["UserID"] = 104;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+            _log4net.Info("Add friends and family for Resident With ID " + UserID + " Was Called !!");
+            Payments payments = new Payments();
+            Employees employees = new Employees();
+            try
+            {
+
+                using (var clientForPaymentDetails = new HttpClient())
+                {
+                    clientForPaymentDetails.BaseAddress = new Uri(baseUrlForPaymentAPI);
+                    clientForPaymentDetails.DefaultRequestHeaders.Clear();
+                    clientForPaymentDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await clientForPaymentDetails.GetAsync("api/Payments/GetPaymentByServiceId/" + id);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        payments = JsonConvert.DeserializeObject<Payments>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Payment API Not Reachable. Please Try Again Later.";
+            }
+            try
+            {
+                using (var clientForEmployeeDetails = new HttpClient())
+                {
+                    clientForEmployeeDetails.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                    clientForEmployeeDetails.DefaultRequestHeaders.Clear();
+                    clientForEmployeeDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await clientForEmployeeDetails.GetAsync("api/Employees/" + payments.EmployeeId);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        employees = JsonConvert.DeserializeObject<Employees>(Response);
+                        
+                    }
+
+                }
+            }
+            catch(Exception)
+            {
+                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+            }
+            try
+            {
+                if (resident.ResidentWallet > payments.Amount)
+                {
+                    resident.ResidentWallet = resident.ResidentWallet - payments.Amount;
+                    employees.EmployeeWallet = employees.EmployeeWallet + payments.Amount;
+                    using (var clientToUpdateEmployeeWallet = new HttpClient())
+                    {
+                        clientToUpdateEmployeeWallet.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(employees), Encoding.UTF8, "application/json");
+                        clientToUpdateEmployeeWallet.DefaultRequestHeaders.Clear();
+                        clientToUpdateEmployeeWallet.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage Res = await clientToUpdateEmployeeWallet.PostAsync("api/Employees/UpdateEmployeeWallet/" + payments.EmployeeId, content);
+                        if (Res.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            _log4net.Info("Wallet of Employee With ID " + payments.EmployeeId + " Was Updated !!");
+
+                        }
+
+                    }
 
 
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(resident), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Resident/" + resident.ResidentId, content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+
+                            _log4net.Info("Wallet of Resident With ID " + UserID + " Was Updated!!");
+
+                            return RedirectToAction("RechargeWallet");
+
+                        }
+                    }
+                }
+                else
+                {
+                    ViewBag.Message = "Not enought wallet balance. Please recharge your wallet.";
+                }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "Employee API or Resident API Not Reachable. Please Try Again Later.";
+                }
+                return View();
+        }
 
         //////////////////////////FaF
         public IActionResult AddFaF()
