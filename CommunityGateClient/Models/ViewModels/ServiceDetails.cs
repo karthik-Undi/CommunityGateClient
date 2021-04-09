@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ServicesAPI.Models.ViewModels
+namespace CommunityGateClient.Models.ViewModels
 {
     public class ServiceDetails
     {

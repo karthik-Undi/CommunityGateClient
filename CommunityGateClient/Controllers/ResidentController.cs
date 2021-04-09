@@ -2,7 +2,6 @@
 using CommunityGateClient.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using ServicesAPI.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -240,7 +239,6 @@ namespace CommunityGateClient.Controllers
         {
             if (ModelState.IsValid)
             {
-                TempData["UserID"] = 104;
                 int UserID = Convert.ToInt32(TempData.Peek("UserID"));
                 _log4net.Info("Update Visitor For Resident With ID "+UserID+" Was Called !!");
                 //send visitor Details
@@ -618,6 +616,9 @@ namespace CommunityGateClient.Controllers
 
         public async Task<IActionResult> ShowServices()
         {
+            Employees e = new Employees();
+            e.EmployeeRating = 5;
+            servicedetailsplusemployeerating s = new servicedetailsplusemployeerating();
             List<ServiceDetails> servicedetails = new List<ServiceDetails>();
             int residentId = Convert.ToInt32(TempData.Peek("UserID"));
             _log4net.Info("Show Services For Resident ID " + residentId + " Was Called !!");
@@ -1009,5 +1010,52 @@ namespace CommunityGateClient.Controllers
             }
             return View(wapObject);
         }
+
+
+
+
+        public IActionResult RateEmployee()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> RateEmployee(int id, Employees emp)
+        {
+
+
+
+            if (emp.EmployeeRating!=null)
+            {
+                try
+                {
+
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                        StringContent content = new StringContent(JsonConvert.SerializeObject(emp), Encoding.UTF8, "application/json");
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage response = await client.PostAsync("/api/Employees/UpdateEmployeeRating/" + id, content);
+                        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ViewBag.Message = "Failed";
+                        }
+                        else
+                        {
+                            _log4net.Info("Rating for employee With ID " + id + " Was Updated to " + emp.EmployeeRating);
+                            return RedirectToAction("ShowServices");
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+                }
+            }
+            return RedirectToAction("ShowServices");
+        }
+
     }
 }

@@ -1,9 +1,12 @@
-﻿@model IEnumerable<ServicesAPI.Models.ViewModels.ServiceDetails>
+﻿@model IEnumerable<CommunityGateClient.Models.ViewModels.ServiceDetails>
 
 @{
     ViewData["Title"] = "ShowServices";
     Layout = "~/Views/Shared/_ResidentLayout.cshtml";
 }
+
+
+
 
 <div class="card">
 
@@ -119,18 +122,20 @@
                                         {
                                             @Html.ActionLink("Edit Booking", "UpdateService", new { id = item.ServiceId })
                                         }
-                                        @if (item.ServiceStatus == "Requested Payment")
+                                        @if (item.ServiceStatus == "RequestedPayment")
                                         {
                                             @Html.ActionLink("Pay", "PayForService", new { id = item.ServiceId })
                                         }
                                         @if (item.ServiceStatus == "Completed")
                                         {
-                                            @Html.ActionLink("Rate Employee", "RateEmployee", new { id = item.EmployeeId })
+                                            @Html.ActionLink("Rate Employee", "RateEmployee", new { id = item.EmployeeId})
                                         }
+
                                         @if (item.ServiceStatus == "Accepted")
                                         {
-                                           <p>Employee will visit as scheduled</p>
+                                            <p>Employee will visit as scheduled</p>
                                         }
+
 
                                     </td>
                                 </tr>
