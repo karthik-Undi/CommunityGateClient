@@ -122,7 +122,7 @@
                                         {
                                             @Html.ActionLink("Edit Booking", "UpdateService", new { id = item.ServiceId })
                                         }
-                                        @if (item.ServiceStatus == "RequestedPayment")
+                                        @if (item.ServiceStatus == "Requested Payment")
                                         {
                                             @Html.ActionLink("Pay", "PayForService", new { id = item.ServiceId })
                                         }
