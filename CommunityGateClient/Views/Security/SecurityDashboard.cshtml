@@ -1,0 +1,40 @@
+﻿@model CommunityGateClient.Models.ViewModels.OneForAll
+@{
+    ViewData["Title"] = "SecurityDashboard";
+    Layout = "~/Views/Shared/_SecurityLayout.cshtml";
+}
+
+@foreach (var item in Model.DashboardPosts)
+{
+
+    <div class="col-md-6">
+        <!-- Box Comment -->
+        <div style="width:1220px;" class="card card-widget">
+            <div style="background-color:powderblue" class="card-header">
+                <div class="user-block">
+                    <span style="margin-left:0px;" class="username">
+                        @Html.DisplayFor(modelItem => item.ResidentName)
+                    </span>
+                    <span style="margin-left:0px;" class="description">Shared at - @Html.DisplayFor(modelItem => item.DashTime). with @Html.DisplayFor(modelItem => item.DashIntendedFor)</span>
+                </div>
+                <!-- /.user-block -->
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <h6>Post Subject - @Html.DisplayFor(modelItem => item.DashType)</h6>
+                <label>@Html.DisplayFor(modelItem => item.DashTitle)</label>
+                <!-- post text -->
+
+                <p>@Html.DisplayFor(modelItem => item.DashBody)</p>
+
+            </div>
+        </div>
+    </div>
+}
+
