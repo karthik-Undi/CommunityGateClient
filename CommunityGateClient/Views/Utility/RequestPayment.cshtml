@@ -1,0 +1,42 @@
+﻿@model CommunityGateClient.Models.Payments
+
+@{
+    ViewData["Title"] = "RequestPayment";
+    Layout = "~/Views/Shared/_UtilityLayout.cshtml";
+}
+
+<div class="col-md-6">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Edit Notice</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <form asp-action="RequestPayment">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Amount" class="control-label"></label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Amount breakup</label>
+                        <textarea asp-for="PaymentFor" class="form-control" ></textarea>
+                        <span asp-validation-for="PaymentFor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Request Payment" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

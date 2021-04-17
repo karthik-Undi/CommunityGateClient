@@ -20,6 +20,9 @@ namespace CommunityGateClient.Models.ViewModels
         public string EmployeeName { get; set; }
         public int? EmployeeRating { get; set; }
 
+        public string ResidentName { get; set; }
+
+        public int? ResidentHouseNo { get; set; }
 
 
     }

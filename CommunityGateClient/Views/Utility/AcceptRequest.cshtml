@@ -1,0 +1,37 @@
+﻿@model CommunityGateClient.Models.Services
+
+@{
+    ViewData["Title"] = "AcceptRequest";
+    Layout = "~/Views/Shared/_UtilityLayout.cshtml";
+}
+
+<div class="col-md-6">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Delete Visitor</h3>
+
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <form asp-action="AcceptRequest">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label class="control-label">Message</label>
+                        <textarea asp-for="ServiceMessage" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="ServiceMessage" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Estimated Price</label>
+                        <input asp-for="ServicePrice" class="form-control" />
+                        <span asp-validation-for="ServicePrice" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Accept" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

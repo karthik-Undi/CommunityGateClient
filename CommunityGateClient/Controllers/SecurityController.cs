@@ -26,7 +26,7 @@ namespace CommunityGateClient.Controllers
         }
         public async Task<IActionResult> SecurityDashboard()
         {
-            TempData["UserID"] = 1003;
+            TempData["UserID"] = 1002;
 
             int UserID = Convert.ToInt32(TempData.Peek("UserID"));
             _log4net.Info("Home Page was called For Security with Id " + UserID);
