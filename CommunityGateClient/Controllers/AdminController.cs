@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CommunityGateClient.Controllers
@@ -19,10 +20,14 @@ namespace CommunityGateClient.Controllers
         }
         static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(AdminController));
         static Employees employee = new Employees();
-        string baseUrlForEmployeeAPI = "http://localhost:62288/";
         string BaseurlForDashboardAPI = "http://localhost:52044/";
-        string baseUrlForFaFAPI = "http://localhost:62521/";
+        string BaseurlForResidentAPI = "http://localhost:27414/";
         string BaseurlForVisitorAPI = "https://localhost:44301/";
+        string BaseurlForComplaintAPI = "http://localhost:36224/";
+        string baseUrlForServicesAPI = "http://localhost:41093/";
+        string baseUrlForFaFAPI = "http://localhost:62521/";
+        string baseUrlForPaymentAPI = "http://localhost:27340/";
+        string baseUrlForEmployeeAPI = "http://localhost:62288/";
 
         public async Task<IActionResult> SecurityDashboard()
         {
@@ -208,10 +213,71 @@ namespace CommunityGateClient.Controllers
             {
                 ViewBag.Message = "Employees API Not Reachable. Please Try Again Later.";
             }
-            return View(employees.Where(emp => emp.IsApproved=="Not Approved"));
+            return View(employees.Where(emp => emp.IsApproved== "notApproved"));
         }
 
+        public async Task<IActionResult> ShowNonApprovedResidents()
+        {
 
+            List<Residents> residents = new List<Residents>();
+            _log4net.Info("Show all Employees Was Called !!");
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await client.GetAsync("api/Resident/");
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        residents = JsonConvert.DeserializeObject<List<Residents>>(Response);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Employees API Not Reachable. Please Try Again Later.";
+            }
+            return View(residents.Where(emp => emp.IsApproved == "notApproved"));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveResident(int id)
+        {
+            Residents res = new Residents();
+            try
+            {
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(BaseurlForResidentAPI);
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(res), Encoding.UTF8, "application/json");
+
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.PostAsync("/api/Resident/ApproveResident" + id,content);
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ViewBag.Message = "Failed";
+                    }
+                    else
+                    {
+                        _log4net.Info("Resident with id  " + id + " Was Approved by admin !!");
+                        return RedirectToAction("ShowNonApprovedResidents");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+            }
+
+            return RedirectToAction("ShowNonApprovedResidents");
+        }
 
     }
 }

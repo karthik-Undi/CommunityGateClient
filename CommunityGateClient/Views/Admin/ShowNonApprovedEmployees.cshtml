@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CommunityGateClient.Models.ViewModels.FafDetails>
+﻿@model IEnumerable<CommunityGateClient.Models.Employees>
 
 @{
     ViewData["Title"] = "ViewAllFaF";
@@ -10,10 +10,10 @@
     <!-- /.card-header -->
 
     <div class="card-header border-transparent">
-        <h3 class="card-title">Friends and family list</h3>
+        <h3 class="card-title">Unapproved Employees</h3>
         <div class="card-tools">
 
-            <input id="search" type="text" placeholder="Search Resident House No.">
+            <input id="search" type="text" placeholder="Search ">
 
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
@@ -35,19 +35,18 @@
                         <thead>
                             <tr>
                                 <th>
-                                    Resident House Number
+                                    Name
                                 </th>
                                 <th>
-                                    Resident Name
+                                    Department
                                 </th>
                                 <th>
-                                    Family or Friend's Name
+                                    Email
                                 </th>
                                 <th>
-                                    Relation
+                                    Mobile
                                 </th>
                                 <th>
-                                    Resident Mobile Number
                                 </th>
                             </tr>
                         </thead>
@@ -56,20 +55,21 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.ResidentHouseNo)
+                                        @Html.DisplayFor(modelItem => item.EmployeeName)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.ResidentName)
+                                        @Html.DisplayFor(modelItem => item.EmployeeDept)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.FaFname)
+                                        @Html.DisplayFor(modelItem => item.EmployeeEmail)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Relation)
+                                        @Html.DisplayFor(modelItem => item.EmployeeMobile)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.ResidentMobileNo)
+                                        @Html.ActionLink("Approve", "ApproveEmployee", new {id=item.EmployeeId})
                                     </td>
+
                                 </tr>
                             }
                         </tbody>
