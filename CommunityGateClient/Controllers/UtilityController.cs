@@ -196,6 +196,7 @@ namespace CommunityGateClient.Controllers
                     else
                     {
                         _log4net.Info(" employee With ID " + userid + " Accepted request with id  " + id);
+                        serv = service;
                         return RedirectToAction("ShowAllServices");
                     }
 
@@ -241,6 +242,36 @@ namespace CommunityGateClient.Controllers
                     else
                     {
                         _log4net.Info(" employee With ID " + userid + " Accepted request with id  " + id);
+                        //return RedirectToAction("ShowAllServices");
+                    }
+
+                }
+
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Service API Not Reachable. Please Try Again Later.";
+            }
+            Services temp = serv;
+            temp.ServiceStatus = "Requested Payment";
+            temp.ServiceId = id;
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrlForServicesAPI);
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(temp), Encoding.UTF8, "application/json");
+
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage response = await client.PostAsync("/api/Services/ServiceStatus/" + id, content);
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ViewBag.Message = "Failed";
+                    }
+                    else
+                    {
+                        _log4net.Info(" employee With ID " + userid + " Accepted request with id  " + id);
                         return RedirectToAction("ShowAllServices");
                     }
 
@@ -252,10 +283,103 @@ namespace CommunityGateClient.Controllers
                 ViewBag.Message = "Service API Not Reachable. Please Try Again Later.";
             }
 
+
             return RedirectToAction("ShowServices");
         }
 
+        public async Task<IActionResult> EmployeeWallet()
+        {
+            Employees employees = new Employees();
+            _log4net.Info("Recharge Wallet and View Payment History Was Called !!");
+         
+            TempData["UserID"] = 1011;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+
+            try
+            {
+                using (var clientForEmployeeDetails = new HttpClient())
+                {
+                    clientForEmployeeDetails.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                    clientForEmployeeDetails.DefaultRequestHeaders.Clear();
+                    clientForEmployeeDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await clientForEmployeeDetails.GetAsync("api/Employees/" + UserID);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        employees = JsonConvert.DeserializeObject<Employees>(Response);
+
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+            }
 
 
+            return View(employees);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EmployeeWallet(Employees e)
+        {
+            Employees employees = new Employees();
+            _log4net.Info("Recharge Wallet and View Payment History Was Called !!");
+
+            TempData["UserID"] = 1011;
+            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+
+            try
+            {
+                using (var clientForEmployeeDetails = new HttpClient())
+                {
+                    clientForEmployeeDetails.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                    clientForEmployeeDetails.DefaultRequestHeaders.Clear();
+                    clientForEmployeeDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await clientForEmployeeDetails.GetAsync("api/Employees/" + UserID);
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var Response = Res.Content.ReadAsStringAsync().Result;
+                        employees = JsonConvert.DeserializeObject<Employees>(Response);
+
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+            }
+
+            employees.EmployeeWallet = employees.EmployeeWallet - e.EmployeeWallet;
+            try
+            {
+                using (var clientToUpdateEmployeeWallet = new HttpClient())
+                {
+                    clientToUpdateEmployeeWallet.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(employees), Encoding.UTF8, "application/json");
+                    clientToUpdateEmployeeWallet.DefaultRequestHeaders.Clear();
+                    clientToUpdateEmployeeWallet.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = await clientToUpdateEmployeeWallet.PostAsync("api/Employees/UpdateEmployeeWallet/" + UserID, content);
+                    if (Res.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ViewBag.Message = "Failed";
+                    }
+                    else
+                    {
+                        _log4net.Info("Wallet of Employee With ID " + UserID + " Was Updated !!");
+
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+            }
+
+
+
+            return View(employees);
+        }
     }
 }

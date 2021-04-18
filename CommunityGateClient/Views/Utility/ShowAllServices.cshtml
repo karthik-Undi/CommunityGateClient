@@ -87,7 +87,15 @@
                                     }
                                     @if (item.ServiceStatus == "Accepted")
                                     {
-                                        @Html.ActionLink("Request Payment", "RequestPayment", new { id = item.ServiceId,residentid=item.ResidentId })
+                                        @Html.ActionLink("Request Payment", "RequestPayment", new { id = item.ServiceId, residentid = item.ResidentId })
+                                    }
+                                    @if (item.ServiceStatus == "Requested Payment")
+                                    {
+                                        <p style="color:darkgoldenrod">Waiting for resident to pay</p>
+                                    }
+                                    @if (item.ServiceStatus == "Completed")
+                                    {
+                                        <p style="color:green">Payment Received</p>
                                     }
                                 </td>
                             </tr>
