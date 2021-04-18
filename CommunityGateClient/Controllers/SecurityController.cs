@@ -1,5 +1,6 @@
 ﻿using CommunityGateClient.Models;
 using CommunityGateClient.Models.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -26,74 +27,79 @@ namespace CommunityGateClient.Controllers
         }
         public async Task<IActionResult> SecurityDashboard()
         {
-            TempData["UserID"] = 1002;
-
-            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
-            _log4net.Info("Home Page was called For Security with Id " + UserID);
-            //Get Resident Details
-            try
+            if (HttpContext.Session.GetInt32("UserID") != null)
             {
+                TempData["UserID"] = HttpContext.Session.GetInt32("UserID");
 
-                using (var client = new HttpClient())
+                int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+                _log4net.Info("Home Page was called For Security with Id " + UserID);
+                //Get Resident Details
+                try
                 {
-                    client.BaseAddress = new Uri(baseUrlForEmployeeAPI);
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpResponseMessage Res = await client.GetAsync("api/Employees/" + UserID);
-                    if (Res.IsSuccessStatusCode)
+
+                    using (var client = new HttpClient())
                     {
-                        var Response = Res.Content.ReadAsStringAsync().Result;
-                        employee = JsonConvert.DeserializeObject<Employees>(Response);
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
-            }
-
-            try
-            {
-                TempData["UserEmail"] = employee.EmployeeEmail;
-            }
-            catch (Exception)
-            {
-                TempData["UserEmail"] = "API not reachable";
-            }
-
-            //NoticeBoard
-            try
-            {
-                List<DashBoardPosts> dashBoardPostList = new List<DashBoardPosts>();
-                using (var client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(BaseurlForDashboardAPI);
-
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpResponseMessage Res = await client.GetAsync("api/Dashboard/");
-                    var model = new List<DashBoardPosts>();
-                    if (Res.IsSuccessStatusCode)
-                    {
-                        var Response = Res.Content.ReadAsStringAsync().Result;
-
-                        dashBoardPostList = JsonConvert.DeserializeObject<List<DashBoardPosts>>(Response);
-                        var tables = new OneForAll
+                        client.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage Res = await client.GetAsync("api/Employees/" + UserID);
+                        if (Res.IsSuccessStatusCode)
                         {
-                            DashboardPosts = dashBoardPostList.OrderByDescending(post => post.DashItemId).ToList()
+                            var Response = Res.Content.ReadAsStringAsync().Result;
+                            employee = JsonConvert.DeserializeObject<Employees>(Response);
+                        }
 
-                        };
-                        return View(tables);
                     }
-
                 }
+                catch (Exception)
+                {
+                    ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+                }
+
+                try
+                {
+                    TempData["UserEmail"] = employee.EmployeeEmail;
+                }
+                catch (Exception)
+                {
+                    TempData["UserEmail"] = "API not reachable";
+                }
+
+                //NoticeBoard
+                try
+                {
+                    List<DashBoardPosts> dashBoardPostList = new List<DashBoardPosts>();
+                    using (var client = new HttpClient())
+                    {
+                        client.BaseAddress = new Uri(BaseurlForDashboardAPI);
+
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage Res = await client.GetAsync("api/Dashboard/");
+                        var model = new List<DashBoardPosts>();
+                        if (Res.IsSuccessStatusCode)
+                        {
+                            var Response = Res.Content.ReadAsStringAsync().Result;
+
+                            dashBoardPostList = JsonConvert.DeserializeObject<List<DashBoardPosts>>(Response);
+                            var tables = new OneForAll
+                            {
+                                DashboardPosts = dashBoardPostList.OrderByDescending(post => post.DashItemId).ToList()
+
+                            };
+                            return View(tables);
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
+                }
+                return View();
             }
-            catch (Exception)
-            {
-                ViewBag.Message = "DashBoard API Not Reachable. Please Try Again Later.";
-            }
-            return View();
+            else
+                return RedirectToAction("Login", "Login");
         }
 
         public async Task<IActionResult> ViewAllFaF()

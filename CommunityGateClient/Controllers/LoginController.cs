@@ -7,12 +7,18 @@ using CommunityGateClient.Models.ViewModels;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
+using CommunityGateClient.Models;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 
 namespace CommunityGateClient.Controllers
 {
     public class LoginController : Controller
     {
         static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger(typeof(LoginController));
+        string baseUrlForResidentApi = "http://localhost:27414/";
+        string baseUrlForEmployeeAPI = "http://localhost:62288/";
+
         public IActionResult Index()
         {
             return View();
@@ -68,8 +74,73 @@ namespace CommunityGateClient.Controllers
                         else
                         {
                             _log4net.Info("Login Was Done With Email " + loginDetails.Username + " And the Right Password !!");
+                            if(loginDetails.LoginType == "Resident")
+                            {
+                                Residents resident = new Residents();
+                                try
+                                {
 
-                            ViewBag.message = "Success";
+                                    using (var client = new HttpClient())
+                                    {
+                                        client.BaseAddress = new Uri(baseUrlForResidentApi);
+                                        client.DefaultRequestHeaders.Clear();
+                                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                                        HttpResponseMessage Res = await client.GetAsync("api/Resident/GetResidentByMail/" + loginDetails.Username );
+                                        if (Res.IsSuccessStatusCode)
+                                        {
+                                            var Response = Res.Content.ReadAsStringAsync().Result;
+                                            resident = JsonConvert.DeserializeObject<Residents>(Response);
+                                            HttpContext.Session.SetInt32("UserID", resident.ResidentId);
+                                            return RedirectToAction("ResidentDashboard", "Resident");
+                                        }
+
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    ViewBag.Message = "Resident API Not Reachable. Please Try Again Later.";
+                                }
+                            }
+                            if(loginDetails.LoginType == "Employee")
+                            {
+                                Employees employee = new Employees();
+                                try
+                                {
+
+                                    using (var client = new HttpClient())
+                                    {
+                                        client.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                                        client.DefaultRequestHeaders.Clear();
+                                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                                        HttpResponseMessage Res = await client.GetAsync("api/Employees/GetEmployeeByMail/" + loginDetails.Username);
+                                        if (Res.IsSuccessStatusCode)
+                                        {
+                                            var Response = Res.Content.ReadAsStringAsync().Result;
+                                            employee = JsonConvert.DeserializeObject<Employees>(Response);
+                                            if (employee.EmployeeDept == "Security")
+                                            {
+                                                HttpContext.Session.SetInt32("UserID", employee.EmployeeId);
+                                                return RedirectToAction("SecurityDashboard", "Security");
+                                            }
+                                            else
+                                            {
+                                                HttpContext.Session.SetInt32("UserID", employee.EmployeeId);
+                                                return RedirectToAction("UtilityDashboard", "Utility");
+                                            }
+                                        }
+
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+                                }
+
+                            }
+                            if(loginDetails.LoginType == "Admin")
+                            {
+                                return RedirectToAction("SecurityDashboard", "Admin");
+                            }
                         }
                     }
 
