@@ -245,7 +245,7 @@ namespace CommunityGateClient.Controllers
             return View(residents.Where(emp => emp.IsApproved == "notApproved"));
         }
 
-        [HttpPost]
+
         public async Task<IActionResult> ApproveResident(int id)
         {
             Residents res = new Residents();
