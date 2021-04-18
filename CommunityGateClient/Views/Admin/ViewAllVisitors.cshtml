@@ -1,0 +1,114 @@
+﻿@model IEnumerable<CommunityGateClient.Models.ViewModels.VisitorDetails>
+
+@{
+    ViewData["Title"] = "ViewAllVisitors";
+    Layout = "~/Views/Shared/_SecurityLayout.cshtml";
+}
+
+<div class="card">
+
+    <!-- /.card-header -->
+
+    <div class="card-header border-transparent">
+        <h3 class="card-title">Visitor Log</h3>
+
+        <div class="card-tools">
+
+            <input id="search" type="text" placeholder="Search Resident House No.">
+
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <!-- /.card-header -->
+
+
+
+
+
+    <div class="card-body">
+        <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                        <tr>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Resident House Number
+                                </th>
+                                <th>
+                                    Resident Name
+                                </th>
+                                <th>
+                                    Visitor Name
+                                </th>
+                                <th>
+                                    Reason for visiting
+                                </th>
+                                <th>
+                                    Visit From
+                                </th>
+                                <th>
+                                    Visit Till
+                                </th>
+                                <th>
+                                    Resident Mobile Number
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ResidentHouseNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ResidentName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.VisitorName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.VisitorResaon)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.VisitStartTime)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.VisitEndTime)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ResidentMobileNo)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div>
+                        @ViewBag.Message
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $("#search").on("keyup", function () {
+        var enteredText = $(this).val();
+        $("table tr").each(function (results) {
+            if (results !== 0) {
+                var id = $(this).find("td:nth-child(1)").text();
+                if (id.indexOf(enteredText) !== 0 && id.toLowerCase().indexOf(enteredText.toLowerCase()) < 0) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show();
+                }
+            }
+        });
+
+    });</script>
