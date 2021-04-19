@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace CommunityGateClient.Models
 {
@@ -14,6 +14,8 @@ namespace CommunityGateClient.Models
         public string ResidentEmail { get; set; }
         public string ResidentPassword { get; set; }
         public string IsApproved { get; set; }
+
+        [RegularExpression("^[1-9]+[1-9]*$", ErrorMessage = "Please enter a value greater than zero")]
         public int? ResidentWallet { get; set; }
 
     }
