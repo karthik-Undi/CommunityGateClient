@@ -32,7 +32,7 @@
                         <div class="form-group">
                             <p style="font-size:18px;">Withdraw Amount</p>
 
-                            <input asp-for="EmployeeWallet" class="form-control" required/>
+                            <input asp-for="EmployeeWallet" class="form-control" disabled/>
                             <span asp-validation-for="EmployeeWallet" class="text-danger"></span>
                         </div>
 
@@ -53,6 +53,9 @@
                         <div class="form-group">
 
                             <input type="submit" value="Transfer to Bank" class="btn btn-primary" />
+                        </div>
+                        <div>
+                            @ViewBag.Message
                         </div>
                     </form>
                 </div>

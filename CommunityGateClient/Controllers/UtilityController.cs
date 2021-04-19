@@ -329,69 +329,62 @@ namespace CommunityGateClient.Controllers
         [HttpPost]
         public async Task<IActionResult> EmployeeWallet(Employees e)
         {
-            Employees employees = new Employees();
-            _log4net.Info("Recharge Wallet and View Payment History Was Called !!");
+                Employees employees = new Employees();
+                _log4net.Info("Recharge Wallet and View Payment History Was Called !!");
 
-            //TempData["UserID"] = 1011;
-            int UserID = Convert.ToInt32(TempData.Peek("UserID"));
+                //TempData["UserID"] = 1011;
+                int UserID = Convert.ToInt32(TempData.Peek("UserID"));
 
-            try
-            {
-                using (var clientForEmployeeDetails = new HttpClient())
-                {
-                    clientForEmployeeDetails.BaseAddress = new Uri(baseUrlForEmployeeAPI);
-                    clientForEmployeeDetails.DefaultRequestHeaders.Clear();
-                    clientForEmployeeDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpResponseMessage Res = await clientForEmployeeDetails.GetAsync("api/Employees/" + UserID);
-                    if (Res.IsSuccessStatusCode)
-                    {
-                        var Response = Res.Content.ReadAsStringAsync().Result;
-                        employees = JsonConvert.DeserializeObject<Employees>(Response);
-
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-                ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
-            }
-
-            if (e.EmployeeWallet <= employee.EmployeeWallet)
-            {
-                employees.EmployeeWallet = employees.EmployeeWallet - e.EmployeeWallet;
                 try
                 {
-                    using (var clientToUpdateEmployeeWallet = new HttpClient())
+                    using (var clientForEmployeeDetails = new HttpClient())
                     {
-                        clientToUpdateEmployeeWallet.BaseAddress = new Uri(baseUrlForEmployeeAPI);
-                        StringContent content = new StringContent(JsonConvert.SerializeObject(employees), Encoding.UTF8, "application/json");
-                        clientToUpdateEmployeeWallet.DefaultRequestHeaders.Clear();
-                        clientToUpdateEmployeeWallet.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        HttpResponseMessage Res = await clientToUpdateEmployeeWallet.PostAsync("api/Employees/UpdateEmployeeWallet/" + UserID, content);
-                        if (Res.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        clientForEmployeeDetails.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                        clientForEmployeeDetails.DefaultRequestHeaders.Clear();
+                        clientForEmployeeDetails.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        HttpResponseMessage Res = await clientForEmployeeDetails.GetAsync("api/Employees/" + UserID);
+                        if (Res.IsSuccessStatusCode)
                         {
-                            ViewBag.Message = "Failed";
-                        }
-                        else
-                        {
-                            _log4net.Info("Wallet of Employee With ID " + UserID + " Was Updated !!");
+                            var Response = Res.Content.ReadAsStringAsync().Result;
+                            employees = JsonConvert.DeserializeObject<Employees>(Response);
 
                         }
+
                     }
                 }
                 catch (Exception)
                 {
                     ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
                 }
-            }
-            else
-            {
-                ViewBag.Message = "Please enter amount within the wallet balance.";
-            }
+
+                    employees.EmployeeWallet = employees.EmployeeWallet - e.EmployeeWallet;
+                    try
+                    {
+                        using (var clientToUpdateEmployeeWallet = new HttpClient())
+                        {
+                            clientToUpdateEmployeeWallet.BaseAddress = new Uri(baseUrlForEmployeeAPI);
+                            StringContent content = new StringContent(JsonConvert.SerializeObject(employees), Encoding.UTF8, "application/json");
+                            clientToUpdateEmployeeWallet.DefaultRequestHeaders.Clear();
+                            clientToUpdateEmployeeWallet.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            HttpResponseMessage Res = await clientToUpdateEmployeeWallet.PostAsync("api/Employees/UpdateEmployeeWallet/" + UserID, content);
+                            if (Res.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                            {
+                                ViewBag.Message = "Failed";
+                            }
+                            else
+                            {
+                                _log4net.Info("Wallet of Employee With ID " + UserID + " Was Updated !!");
+
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ViewBag.Message = "Employee API Not Reachable. Please Try Again Later.";
+                    }
 
 
-            return View(employees);
+                return View(employees);
         }
     }
 }

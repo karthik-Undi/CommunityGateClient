@@ -31,7 +31,6 @@ namespace CommunityGateClient.Models
 
         public string IsApproved { get; set; }
 
-        [RegularExpression("^[1-9]+[0-9]*$", ErrorMessage = "Please enter a value greater than zero")]
         public int? EmployeeWallet { get; set; }
 
         public int? EmployeeRating { get; set; }
