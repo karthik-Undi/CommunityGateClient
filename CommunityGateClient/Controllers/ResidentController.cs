@@ -846,7 +846,7 @@ namespace CommunityGateClient.Controllers
             }
             try
             {
-                if (resident.ResidentWallet > payments.Amount)
+                if (resident.ResidentWallet >= payments.Amount)
                 {
                     resident.ResidentWallet = resident.ResidentWallet - payments.Amount;
                     employees.EmployeeWallet = employees.EmployeeWallet + payments.Amount;
